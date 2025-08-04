@@ -1,10 +1,8 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
 import ProfileDrawer from "@/components/ProfileDrawer";
 
@@ -14,8 +12,8 @@ const Navbar = () => {
   const location = useLocation();
   const { user, loading } = useAuth();
 
-  // Check if we're on the EcoHub landing page
-  const isLandingPage = location.pathname === "/";
+  // Transparent navbar for landing page and EcoHub page
+  const isLandingPage = location.pathname === "/" || location.pathname === "/ecohub";
 
   const navItems = [
     { name: "My Dashboard", path: "/dashboard" },
@@ -35,40 +33,46 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={cn(
-        "fixed top-0 left-0 right-0 z-50",
-        isLandingPage 
-          ? "bg-transparent border-transparent" 
-          : "backdrop-blur-lg bg-background/5 border-b border-border/20"
-      )}>
+      <nav
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50",
+          isLandingPage
+            ? "bg-transparent border-transparent"
+            : "backdrop-blur-lg bg-background/5 border-b border-border/20"
+        )}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="w-10 h-10 rounded-lg group-hover:scale-105 transition-transform duration-200 flex items-center justify-center border border-primary/30">
-                <img 
-                  src="/lovable-uploads/621356d2-c943-46af-8afe-3417b7183c70.png" 
+                <img
+                  src="/media-uploads/621356d2-c943-46af-8afe-3417b7183c70.png"
                   alt="Earthly Logo"
                   className="w-10 h-10 rounded-lg object-cover border border-green-500"
                 />
               </div>
               <div>
-                <h1 className={cn(
-                  "text-xl font-bold manrope-heading",
-                  isLandingPage ? "text-white" : "text-foreground"
-                )}>
+                <h1
+                  className={cn(
+                    "text-xl font-bold manrope-heading",
+                    isLandingPage ? "text-white" : "text-foreground"
+                  )}
+                >
                   Earthly
                 </h1>
-                <p className={cn(
-                  "text-xs hidden sm:block newsreader-subheading",
-                  isLandingPage ? "text-white/80" : "text-muted-foreground"
-                )}>
+                <p
+                  className={cn(
+                    "text-xs hidden sm:block newsreader-subheading",
+                    isLandingPage ? "text-white/80" : "text-muted-foreground"
+                  )}
+                >
                   Tracking Nature's Pulse
                 </p>
               </div>
             </Link>
 
-            {/* Desktop Navigation - Only show on non-landing pages */}
+            {/* Desktop Navigation */}
             {!isLandingPage && (
               <div className="hidden md:flex items-center space-x-1">
                 {navItems.slice(0, 6).map((item) => (
@@ -90,8 +94,8 @@ const Navbar = () => {
 
             {/* Auth Section */}
             <div className="hidden md:flex items-center space-x-4">
-              {!loading && (
-                user ? (
+              {!loading &&
+                (user ? (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -105,22 +109,17 @@ const Navbar = () => {
                 ) : (
                   <>
                     <Link to="/signin">
-                      <Button 
-                        className="hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
-                      >
+                      <Button className="hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300">
                         Sign In
                       </Button>
                     </Link>
                     <Link to="/signup">
-                      <Button 
-                        className="hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
-                      >
+                      <Button className="hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300">
                         Get Started
                       </Button>
                     </Link>
                   </>
-                )
-              )}
+                ))}
             </div>
 
             {/* Mobile menu button */}
@@ -140,37 +139,41 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className={cn(
-            "md:hidden border-t backdrop-blur-lg slide-in-from-bottom",
-            isLandingPage 
-              ? "border-white/20 bg-black/20" 
-              : "border-border/30 bg-background/90"
-          )}>
+          <div
+            className={cn(
+              "md:hidden border-t slide-in-from-bottom",
+              isLandingPage
+                ? "border-transparent bg-transparent"
+                : "backdrop-blur-lg border-border/30 bg-background/90"
+            )}
+          >
             <div className="px-4 py-4 space-y-2">
-              {/* Only show nav items on non-landing pages */}
-              {!isLandingPage && navItems.map((item, index) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    "block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover-scale",
-                    isActive(item.path)
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-secondary"
-                  )}
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              <div className={cn(
-                "pt-4",
-                !isLandingPage ? "border-t border-border/30" : ""
-              )}>
-                {!loading && (
-                  user ? (
+              {!isLandingPage &&
+                navItems.map((item, index) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      "block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover-scale",
+                      isActive(item.path)
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-secondary"
+                    )}
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+
+              <div
+                className={cn(
+                  "pt-4",
+                  !isLandingPage ? "border-t border-border/30" : ""
+                )}
+              >
+                {!loading &&
+                  (user ? (
                     <Button
                       variant="ghost"
                       className={cn(
@@ -190,31 +193,26 @@ const Navbar = () => {
                   ) : (
                     <div className="flex flex-col space-y-2">
                       <Link to="/signin">
-                        <Button 
-                          className="w-full hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
+                        <Button className="w-full hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300">
                           Sign In
                         </Button>
                       </Link>
                       <Link to="/signup">
-                        <Button 
-                          className="w-full hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
+                        <Button className="w-full hover-scale bg-gradient-primary hover:opacity-90 text-white font-semibold px-6 py-2 h-10 rounded-md shadow-lg hover:shadow-xl transition-all duration-300">
                           Get Started
                         </Button>
                       </Link>
                     </div>
-                  )
-                )}
+                  ))}
               </div>
             </div>
           </div>
         )}
       </nav>
 
-      <ProfileDrawer 
-        isOpen={isProfileDrawerOpen} 
-        onClose={() => setIsProfileDrawerOpen(false)} 
+      <ProfileDrawer
+        isOpen={isProfileDrawerOpen}
+        onClose={() => setIsProfileDrawerOpen(false)}
       />
     </>
   );
